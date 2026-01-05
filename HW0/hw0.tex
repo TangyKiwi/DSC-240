@@ -1,0 +1,80 @@
+%! Author = Kevin Lin
+%! Date = 1/12/2026
+
+% Preamble
+\documentclass[11pt,a4paper,margin=1in]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+
+\title{HW 0}
+\author{Kevin Lin}
+\date{1/12/2026}
+
+% Document
+\begin{document}
+\maketitle
+
+\section{}
+\begin{enumerate}[(a)]
+    \item Let $x_1, \ldots, x_n$ be real values. Then for the quadratic function 
+    $f(\theta) = \sum_{i=1}^n w_i (x_i - \theta)^2$ where $w_i > 0$ for all $i$, 
+    the optimal solution $\theta^*$ denoted by $\theta^* = \text{arg min}_\theta f(\theta)$
+    can be calculated as follows:
+    \begin{align*}
+        \frac{d}{d\theta} f(\theta) &= \frac{d}{d\theta} \sum_{i=1}^n w_i (x_i - \theta)^2 \\
+        &= \sum_{i=1}^n w_i \cdot 2 (x_i - \theta) \cdot (-1) \\
+        &= -2 \sum_{i=1}^n w_i (x_i - \theta) \\
+        &= -2 \left( \sum_{i=1}^n w_i x_i - \theta \sum_{i=1}^n w_i \right)
+    \end{align*}
+    Setting the derivative to zero to find the minimum:
+    \begin{align*}
+        -2 \left( \sum_{i=1}^n w_i x_i - \theta \sum_{i=1}^n w_i \right) &= 0 \\
+        \sum_{i=1}^n w_i x_i - \theta \sum_{i=1}^n w_i &= 0 \\
+        \theta \sum_{i=1}^n w_i &= \sum_{i=1}^n w_i x_i \\
+        \theta^* &= \frac{\sum_{i=1}^n w_i x_i}{\sum_{i=1}^n w_i}
+    \end{align*}
+    Thus, the optimal solution is the weighted average of the $x_i$'s. If some 
+    weights are negative, the function may not be convex, and the solution may 
+    not correspond to a minimum.
+    \item
+        \begin{enumerate}[(i)]
+            \item Given $2n$ kids are randomly divied into two equal subgroups,
+            the probability that the two tallest kids end up in the the same
+            subgroup can be calculated as follows:
+            \begin{align*}
+                P(\text{tallest in same group}) &= P(\text{both in group 1}) + P(\text{both in group 2}) \\
+                &= \frac{\binom{2n-2}{n-2}}{\binom{2n}{n}} + \frac{\binom{2n-2}{n-2}}{\binom{2n}{n}} \\
+                &= 2 \cdot \frac{\binom{2n-2}{n-2}}{\binom{2n}{n}} \\
+                &= 2 \cdot \frac{\frac{(2n-2)!}{(n-2)!(n)!}}{\frac{(2n)!}{(n)!(n)!}} \\
+                &= 2 \cdot \frac{(2n-2)! n!}{(n-2)! (2n)!} \\
+                &= 2 \cdot \frac{n(n-1)}{(2n)(2n-1)} \\
+                &= \frac{n(n-1)}{(2n-1)(n)} \\
+                &= \frac{n-1}{2(2n-1)}
+            \end{align*}
+            \item The probabilty that the two tallest kids end up in different subgroups is:
+            \begin{align*}
+                P(\text{tallest in different groups}) &= 1 - P(\text{both tallest in same group}) \\
+                &= 1 - \frac{n-1}{2(2n-1)} \\
+                &= \frac{2(2n-1) - (n-1)}{2(2n-1)} \\
+                &= \frac{4n - 2 - n + 1}{2(2n-1)} \\
+                &= \frac{3n - 1}{2(2n-1)}
+            \end{align*}
+        \end{enumerate}
+    \item We know $P(\text{knows answer}) = p$, and $P(\text{doesn't konw answer}) = 1 - p$.
+    Also, $P(\text{correct} | \text{knows answer}) = 0.99$ and $P(\text{correct} | \text{doesn't know answer}) = 1/k$.
+    Then $P(\text{knew answer} | \text{correct})$ can be calculated using Bayes' Theorem:
+    \begin{align*}
+        P(\text{knew answer} | \text{correct}) &= \frac{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer})}{P(\text{correct})} \\
+        &= \frac{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer})}{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer}) + P(\text{correct} | \text{didn't know answer}) \cdot P(\text{didn't know answer})} \\
+        &= \frac{0.99 \cdot p}{0.99 \cdot p + \frac{1}{k} \cdot (1 - p)}
+    \end{align*}
+\end{enumerate}
+
+\section{}
+\begin{enumerate}[(a)]
+    \item a
+\end{enumerate}
+\end{document}
