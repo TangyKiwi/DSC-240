@@ -63,18 +63,74 @@
                 &= \frac{3n - 1}{2(2n-1)}
             \end{align*}
         \end{enumerate}
-    \item We know $P(\text{knows answer}) = p$, and $P(\text{doesn't konw answer}) = 1 - p$.
+    \item We know $P(\text{knows answer}) = p$, and $P(\text{doesn't know answer}) = 1 - p$.
     Also, $P(\text{correct} | \text{knows answer}) = 0.99$ and $P(\text{correct} | \text{doesn't know answer}) = 1/k$.
-    Then $P(\text{knew answer} | \text{correct})$ can be calculated using Bayes' Theorem:
+    Then $P(\text{knows answer} | \text{correct})$ can be calculated using Bayes' 
+    Theorem. Let $P(\text{knows answer}) = P(K)$, $P(\text{doesn't know answer}) = P(DK)$, 
+    and $P(\text{correct}) = P(C)$ for simplicity.
     \begin{align*}
-        P(\text{knew answer} | \text{correct}) &= \frac{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer})}{P(\text{correct})} \\
-        &= \frac{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer})}{P(\text{correct} | \text{knew answer}) \cdot P(\text{knew answer}) + P(\text{correct} | \text{didn't know answer}) \cdot P(\text{didn't know answer})} \\
+        P(\text{knows answer} | \text{correct}) &= P(K | C) = \frac{P(C | K) \cdot P(K)}{P(C)} \\
+        &= \frac{P(C | K) \cdot P(K)}{P(C | K) \cdot P(K) + P(C | DK) \cdot P(DK)} \\
         &= \frac{0.99 \cdot p}{0.99 \cdot p + \frac{1}{k} \cdot (1 - p)}
     \end{align*}
-\end{enumerate}
-
-\section{}
-\begin{enumerate}[(a)]
-    \item a
+    \item Given $L(p)=p^6(1-p)^4$, we can find the value of p that maximizes the
+    likelihood function by taking the derivative and setting it to zero:
+    \begin{align*}
+        \frac{d}{dp} L(p) &= \frac{d}{dp} \left( p^6 (1-p)^4 \right) \\
+        &= 6 p^5 (1-p)^4 + p^6 \cdot 4 (1-p)^3 \cdot (-1) \\
+        &= p^5 (1-p)^3 \left( 6 (1-p) - 4 p \right) \\
+        &= p^5 (1-p)^3 (6 - 10p)
+    \end{align*}
+    Setting the derivative to zero:
+    \begin{align*}
+        p^5 (1-p)^3 (6 - 10p) &= 0
+    \end{align*}
+    The solutions are $p = 0$, $p = 1$, and $p = \frac{6}{10} = 0.6$.
+    Since $p$ must be in the interval (0, 1), the value of $p$ that maximizes 
+    the likelihood function is $p = 0.6$.
+    \item Given $F(w) = \sum_{i=1}^n (x_i^Tw-y_i)^2 + \lambda \sum_{i=1}^d w_i^2$,
+    $w \in \mathbb{R}^d$, $x_1 \ldots x_n \in \mathbb{R}^d$ column vectors, and 
+    $y_i$ scalars, we can find the gradient $\nabla_w F(w)$ by calculating the
+    partial derivatives with respect to each variable $w_i$:
+    \begin{align*}
+        \frac{\partial}{\partial w_j} F(w) &= \frac{\partial}{\partial w_j} \left( \sum_{i=1}^n (x_i^Tw - y_i)^2 + \lambda \sum_{i=1}^d w_i^2 \right) \\
+        &= \sum_{i=1}^n \frac{\partial}{\partial w_j} (x_i^Tw - y_i)^2 + \lambda \cdot 2 w_j \\
+        &= \sum_{i=1}^n 2 (x_i^Tw - y_i) x_i + 2 \lambda w_j
+    \end{align*}
+    Thus, the gradient vector is:
+    \[
+        \nabla_w F(w) = \begin{bmatrix}
+            \sum_{i=1}^n 2 (x_i^Tw - y_i) x_i + 2 \lambda w_1 \\
+            \sum_{i=1}^n 2 (x_i^Tw - y_i) x_i + 2 \lambda w_2 \\
+            \vdots \\
+            \sum_{i=1}^n 2 (x_i^Tw - y_i) x_i + 2 \lambda w_d
+        \end{bmatrix}
+    \]
+    \item Given the softmax function $f(x_1, \ldots, x_n) = log \sum_{i=1}^n e^{x_i}$,
+    we can find the gradient of $f$ with respect to vector $x$ as follows:
+    \begin{align*}
+        \frac{\partial}{\partial x_j} f(x_1, \ldots, x_n) &= \frac{\partial}{\partial x_j} \log \sum_{i=1}^n e^{x_i} \\
+        &= \frac{1}{\sum_{i=1}^n e^{x_i}} \cdot \frac{\partial}{\partial x_j} \sum_{i=1}^n e^{x_i} \\
+        &= \frac{1}{\sum_{i=1}^n e^{x_i}} \cdot e^{x_j} \\
+        &= \frac{e^{x_j}}{\sum_{i=1}^n e^{x_i}}
+    \end{align*}
+    Thus, the gradient vector is:
+    \[
+        \nabla_x f(x_1, \ldots, x_n) = \begin{bmatrix}
+            \frac{e^{x_1}}{\sum_{i=1}^n e^{x_i}} \\
+            \frac{e^{x_2}}{\sum_{i=1}^n e^{x_i}} \\
+            \vdots \\
+            \frac{e^{x_n}}{\sum_{i=1}^n e^{x_i}}
+        \end{bmatrix}
+    \]
+    \item For the previous softmax function, $\max_i x_i \leq f(x_1, \ldots, x_n) \leq \max_i x_i + \log n$.
+    We can show this as follows:
+    \[
+        f(x_1, \ldots, x_n) = \log \sum_{i=1}^n e^{x_i} \geq \log e^{\max_i x_i} = \max_i x_i
+    \]
+    and
+    \[
+        f(x_1, \ldots, x_n) = \log \sum_{i=1}^n e^{x_i} \leq \log \left( n e^{\max_i x_i} \right) = \log n + \max_i x_i
+    \]
 \end{enumerate}
 \end{document}
