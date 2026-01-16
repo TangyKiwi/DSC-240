@@ -79,6 +79,8 @@ def run_train_test(training_input, testing_input):
         dot2 = sum(x[i] * centroid2[i] for i in range(D_train))
         norm1 = sum(centroid1[i] ** 2 for i in range(D_train))
         norm2 = sum(centroid2[i] ** 2 for i in range(D_train))
+        # can use numpy
+        # (centroid1 - centroid2) @ x - 0.5 * (np.linalg.norm(centroid1)**2 - np.linalg.norm(centroid2)**2)
         return dot1 - dot2 - 0.5 * (norm1 - norm2)
     
     # ==========================================================================
