@@ -115,6 +115,8 @@ def run_train_test(training_input, testing_input):
                 else:
                     predicted_class = 'C'
 
+            # update TP, TN, FP, FN
+            # fix this according to MP1_extra.pdf
             if true_class == 'A':
                 if predicted_class == 'A':
                     TP += 1
