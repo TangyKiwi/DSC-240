@@ -90,12 +90,11 @@ def run_train_test(training_input, testing_input):
     # first use A/B
     # if classified as A, then decide A or C
     # if classified as B, then decide B or C
-    # keep track of TP, TN, FP, FN
+    # keep track of TP, TN, FP, FN for each class
 
-    TP = 0
-    TN = 0
-    FP = 0
-    FN = 0
+    A_TP, A_TN, A_FP, A_FN = 0, 0, 0, 0
+    B_TP, B_TN, B_FP, B_FN = 0, 0, 0, 0
+    C_TP, C_TN, C_FP, C_FN = 0, 0, 0, 0
 
     for test_data, true_class in [(A_test, 'A'), (B_test, 'B'), (C_test, 'C')]:
         for x in test_data:
@@ -119,24 +118,68 @@ def run_train_test(training_input, testing_input):
             # fix this according to MP1_extra.pdf
             if true_class == 'A':
                 if predicted_class == 'A':
-                    TP += 1
+                    A_TP += 1
+                    B_TN += 1
+                    C_TN += 1
+                elif predicted_class == 'B':
+                    A_FN += 1
+                    B_FP += 1
+                    C_TN += 1
                 else:
-                    FN += 1
+                    A_FN += 1
+                    B_TN += 1
+                    C_FP += 1
+            elif true_class == 'B':
+                if predicted_class == 'A':
+                    A_FP += 1
+                    B_FN += 1
+                    C_TN += 1
+                elif predicted_class == 'B':
+                    A_TN += 1
+                    B_TP += 1
+                    C_TN += 1
+                else:
+                    A_TN += 1
+                    B_FN += 1
+                    C_FP += 1
+            else:
+                if predicted_class == 'A':
+                    A_FP += 1
+                    B_TN += 1
+                    C_FN += 1
+                elif predicted_class == 'B':
+                    A_TN += 1
+                    B_FP += 1
+                    C_FN += 1
+                else:
+                    A_TN += 1
+                    B_TN += 1
+                    C_TP += 1
 
     # compute metrics
-    tpr = TP / (TP + FN) if (TP + FN) > 0 else 0
-    fpr = FP / (FP + TN) if (FP + TN) > 0 else 0
-    error_rate = (FP + FN) / (TP + TN + FP + FN)
-    accuracy = (TP + TN) / (TP + TN + FP + FN)
-    precision = TP / (TP + FP) if (TP + FP) > 0 else 0
+    def compute_metrics(TP, TN, FP, FN):
+        tpr = TP / (TP + FN) if (TP + FN) > 0 else 0
+        fpr = FP / (FP + TN) if (FP + TN) > 0 else 0
+        error_rate = (FP + FN) / (TP + TN + FP + FN) if (TP + TN + FP + FN) > 0 else 0
+        accuracy = (TP + TN) / (TP + TN + FP + FN) if (TP + TN + FP + FN) > 0 else 0
+        precision = TP / (TP + FP) if (TP + FP) > 0 else 0
+        return tpr, fpr, error_rate, accuracy, precision
+    
+    tpr_A, fpr_A, error_rate_A, accuracy_A, precision_A = compute_metrics(A_TP, A_TN, A_FP, A_FN)
+    tpr_B, fpr_B, error_rate_B, accuracy_B, precision_B = compute_metrics(B_TP, B_TN, B_FP, B_FN)
+    tpr_C, fpr_C, error_rate_C, accuracy_C, precision_C = compute_metrics(C_TP, C_TN, C_FP, C_FN)
 
-    return {
-        "tpr": tpr,
-        "fpr": fpr,
-        "error_rate": error_rate,
-        "accuracy": accuracy,
-        "precision": precision
+    output_dic = {
+        "tpr": (tpr_A + tpr_B + tpr_C) / 3,
+        "fpr": (fpr_A + fpr_B + fpr_C) / 3,
+        "error_rate": (error_rate_A + error_rate_B + error_rate_C) / 3,
+        "accuracy": (accuracy_A + accuracy_B + accuracy_C) / 3,
+        "precision": (precision_A + precision_B + precision_C) / 3
     }
+
+    # print(output_dic)
+
+    return output_dic
 
 
     
