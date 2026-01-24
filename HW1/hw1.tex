@@ -1,0 +1,224 @@
+%! Author = Kevin Lin
+%! Date = 1/26/2026
+
+% Preamble
+\documentclass[11pt,a4paper,margin=1in]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{pdfpages}
+
+\title{HW 1}
+\author{Kevin Lin}
+\date{1/26/2026}
+
+% Document
+\begin{document}
+\maketitle
+
+\section{}
+    Let:
+    $$
+        A = \begin{bmatrix} 
+                4 & 1 & 3 & 6 \\ 
+                2 & 7 & 5 & 3
+            \end{bmatrix},
+        B = \begin{bmatrix}
+                0 & 4 \\
+                7 & 6 \\
+                5 & 8 \\
+                3 & 11
+            \end{bmatrix},
+        C = \begin{bmatrix}
+                -13 & 0 & 2 \\
+                5 & 2 & 10 \\
+                0 & 7 & 9
+            \end{bmatrix},
+        D = \begin{bmatrix}
+                5 & -3 & -7 \\
+                4 & 0 & 10 \\
+                7 & 3 & 11
+            \end{bmatrix},
+        E = \begin{bmatrix}
+                -4 & 6 \\
+                12 & 7
+            \end{bmatrix}
+    $$
+    \begin{enumerate}[(a)]
+        \item $(3B)^T$:
+            \begin{align*}
+                (3B)^T &= 3 \cdot B^T \\
+                &= 3 \cdot \begin{bmatrix}
+                    0 & 7 & 5 & 3 \\
+                    4 & 6 & 8 & 11
+                \end{bmatrix} \\
+                &= \begin{bmatrix}
+                    0 & 21 & 15 & 9 \\
+                    12 & 18 & 24 & 33
+                \end{bmatrix}
+            \end{align*}
+        \item $(A - B)^T$ is not possible due to dimension mismatch. $A$ is $2 \times 4$
+        while $B$ is $4 \times 2$.
+        \item $(2B^T - A)^T$:
+            \begin{align*}
+                (2B^T - A)^T &= 2B - A^T \\
+                &= 2 \cdot \begin{bmatrix}
+                    0 & 4 \\
+                    7 & 6 \\
+                    5 & 8 \\
+                    3 & 11
+                \end{bmatrix} - \begin{bmatrix}
+                    4 & 2 \\
+                    1 & 7 \\
+                    3 & 5 \\
+                    6 & 3
+                \end{bmatrix} \\
+                &= \begin{bmatrix}
+                    0 & 8 \\
+                    14 & 12 \\
+                    10 & 16 \\
+                    6 & 22
+                \end{bmatrix} - \begin{bmatrix}
+                    4 & 2 \\
+                    1 & 7 \\
+                    3 & 5 \\
+                    6 & 3
+                \end{bmatrix} \\
+                &= \begin{bmatrix}
+                    -4 & 6 \\
+                    13 & 5 \\
+                    7 & 11 \\
+                    0 & 19
+                \end{bmatrix}
+            \end{align*}
+        \item $(C + 2D^T + E)^T$ is not possible due to dimension mismatch. $C$
+        and $D$ are both $3 \times 3$ while $E$ is $2 \times 2$.
+        \item $(-A)^TE$:
+            \begin{align*}
+                (-A)^TE &= -A^TE \\
+                &= -\begin{bmatrix}
+                    4 & 2 \\
+                    1 & 7 \\
+                    3 & 5 \\
+                    6 & 3
+                \end{bmatrix} \cdot \begin{bmatrix}
+                    -4 & 6 \\
+                    12 & 7
+                \end{bmatrix} \\
+                &= -\begin{bmatrix}
+                    4 \cdot -4 + 2 \cdot 12 & 4 \cdot 6 + 2 \cdot 7 \\
+                    1 \cdot -4 + 7 \cdot 12 & 1 \cdot 6 + 7 \cdot 7 \\
+                    3 \cdot -4 + 5 \cdot 12 & 3 \cdot 6 + 5 \cdot 7 \\
+                    6 \cdot -4 + 3 \cdot 12 & 6 \cdot 6 + 3 \cdot 7
+                \end{bmatrix} \\
+                &= -\begin{bmatrix}
+                    -16 + 24 & 24 + 14 \\
+                    -4 + 84 & 6 + 49 \\
+                    -12 + 60 & 18 + 35 \\
+                    -24 + 36 & 36 + 21
+                \end{bmatrix} \\
+                &= -\begin{bmatrix}
+                    8 & 38 \\
+                    80 & 55 \\
+                    48 & 53 \\
+                    12 & 57
+                \end{bmatrix} \\
+                &= \begin{bmatrix}
+                    -8 & -38 \\
+                    -80 & -55 \\
+                    -48 & -53 \\
+                    -12 & -57
+                \end{bmatrix}
+            \end{align*}
+    \end{enumerate}
+
+\section{}
+    No, $AB \neq BA$. Matrix multiplication is not commutative. We can prove this
+    by calculating both $AB$ and $BA$:
+    \begin{align*}
+        AB &= \begin{bmatrix}
+                2 & 7 & 3 \\
+                1 & 0 & 9 \\
+                -1 & 2 & 10
+            \end{bmatrix} \begin{bmatrix}
+                -2 & 0 & 3 \\
+                2 & -1 & 7 \\
+                6 & 4 & -3
+            \end{bmatrix} \\
+        AB &= \begin{bmatrix}
+                2 \cdot -2 + 7 \cdot 2 + 3 \cdot 6 & 2 \cdot 0 + 7 \cdot -1 + 3 \cdot 4 & 2 \cdot 3 + 7 \cdot 7 + 3 \cdot -3 \\
+                1 \cdot -2 + 0 \cdot 2 + 9 \cdot 6 & 1 \cdot 0 + 0 \cdot -1 + 9 \cdot 4 & 1 \cdot 3 + 0 \cdot 7 + 9 \cdot -3 \\
+                -1 \cdot -2 + 2 \cdot 2 + 10 \cdot 6 & -1 \cdot 0 + 2 \cdot -1 + 10 \cdot 4 & -1 \cdot 3 + 2 \cdot 7 + 10 \cdot -3
+            \end{bmatrix} \\
+        AB &= \begin{bmatrix}
+                -4 + 14 + 18 & 0 - 7 + 12 & 6 + 49 - 9 \\
+                -2 + 0 + 54 & 0 + 0 + 36 & 3 + 0 - 27 \\
+                2 + 4 + 60 & 0 - 2 + 40 & -3 + 14 - 30
+            \end{bmatrix} \\
+        AB &= \begin{bmatrix}
+                28 & 5 & 46 \\
+                52 & 36 & -24 \\
+                66 & 38 & -19
+            \end{bmatrix} \\
+        BA &= \begin{bmatrix}
+                -2 & 0 & 3 \\
+                2 & -1 & 7 \\
+                6 & 4 & -3
+            \end{bmatrix} \begin{bmatrix}
+                2 & 7 & 3 \\
+                1 & 0 & 9 \\
+                -1 & 2 & 10
+            \end{bmatrix} \\
+        BA &= \begin{bmatrix}
+                -2 \cdot 2 + 0 \cdot 1 + 3 \cdot -1 & -2 \cdot 7 + 0 \cdot 0 + 3 \cdot 2 & -2 \cdot 3 + 0 \cdot 9 + 3 \cdot 10 \\
+                2 \cdot 2 + -1 \cdot 1 + 7 \cdot -1 & 2 \cdot 7 + -1 \cdot 0 + 7 \cdot 2 & 2 \cdot 3 + -1 \cdot 9 + 7 \cdot 10 \\
+                6 \cdot 2 + 4 \cdot 1 + -3 \cdot -1 & 6 \cdot 7 + 4 \cdot 0 + -3 \cdot 2 & 6 \cdot 3 + 4 \cdot 9 + -3 \cdot 10
+            \end{bmatrix} \\
+        BA &= \begin{bmatrix}
+                -4 + 0 - 3 & -14 + 0 + 6 & -6 + 0 + 30 \\
+                4 - 1 - 7 & 14 + 0 + 14 & 6 - 9 + 70 \\
+                12 + 4 + 3 & 42 + 0 - 6 & 18 + 36 - 30
+            \end{bmatrix} \\
+        BA &= \begin{bmatrix}
+                -7 & -8 & 24 \\
+                -4 & 28 & 67 \\
+                19 & 36 & 24
+            \end{bmatrix}
+    \end{align*}
+    Thus, $AB \neq BA$.
+\section{}
+    \begin{itemize}
+        \item $\ell_1$ norm of $[0, 0, 0]$:
+            \[
+                ||[0, 0, 0]||_1 = |0| + |0| + |0| = 0
+            \]
+        $\ell_2$ norm of $[0, 0, 0]$:
+            \[
+                ||[0, 0, 0]||_2 = \sqrt{0^2 + 0^2 + 0^2} = 0
+            \]
+        $\ell_\infty$ norm of $[0, 0, 0]$:
+
+        \item $\ell_1$ norm of $[1, 2, 3]$:
+            \[
+                ||[1, 2, 3]||_1 = |1| + |2| + |3| = 6
+            \]
+        $\ell_2$ norm of $[1, 2, 3]$:
+            \[
+                ||[1, 2, 3]||_2 = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}
+            \]
+
+        \item $\ell_1$ norm of $[2, 4, 6]$:
+            \[
+                ||[2, 4, 6]||_1 = |2| + |4| + |6| = 12
+            \]
+        $\ell_2$ norm of $[2, 4, 6]$:
+            \[
+                ||[2, 4, 6]||_2 = \sqrt{2^2 + 4^2 + 6^2} = \sqrt{56} = 2\sqrt{14}
+            \]
+
+        These norms are related to those of $[1, 2, 3]$ by a factor of 2.
+        \item 
+    \end{itemize}
+\end{document}
