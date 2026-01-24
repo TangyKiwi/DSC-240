@@ -9,6 +9,9 @@
 \usepackage{amssymb}
 \usepackage{enumerate}
 \usepackage{pdfpages}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{pdfpages}
 
 \title{HW 1}
 \author{Kevin Lin}
@@ -188,6 +191,7 @@
             \end{bmatrix}
     \end{align*}
     Thus, $AB \neq BA$.
+
 \section{}
     \begin{itemize}
         \item $\ell_1$ norm of $[0, 0, 0]$:
@@ -199,7 +203,9 @@
                 ||[0, 0, 0]||_2 = \sqrt{0^2 + 0^2 + 0^2} = 0
             \]
         $\ell_\infty$ norm of $[0, 0, 0]$:
-
+            \[
+                ||[0, 0, 0]||_\infty = \max(|0|, |0|, |0|) = 0
+            \]
         \item $\ell_1$ norm of $[1, 2, 3]$:
             \[
                 ||[1, 2, 3]||_1 = |1| + |2| + |3| = 6
@@ -208,7 +214,10 @@
             \[
                 ||[1, 2, 3]||_2 = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}
             \]
-
+        $\ell_\infty$ norm of $[1, 2, 3]$:
+            \[
+                ||[1, 2, 3]||_\infty = \max(|1|, |2|, |3|) = 3
+            \]
         \item $\ell_1$ norm of $[2, 4, 6]$:
             \[
                 ||[2, 4, 6]||_1 = |2| + |4| + |6| = 12
@@ -217,8 +226,194 @@
             \[
                 ||[2, 4, 6]||_2 = \sqrt{2^2 + 4^2 + 6^2} = \sqrt{56} = 2\sqrt{14}
             \]
-
+        $\ell_\infty$ norm of $[2, 4, 6]$:
+            \[
+                ||[2, 4, 6]||_\infty = \max(|2|, |4|, |6|) = 6
+            \]
         These norms are related to those of $[1, 2, 3]$ by a factor of 2.
-        \item 
+        \item No, a vector can not have a negative norm by definition as the norm
+        is positive definite.
     \end{itemize}
+
+\section{} 
+    Given $X = [x_1, x_2, \dots, x_n] \in \mathbb{R}^{m\times n}$ where $x_i \in \mathbb{R}^m$
+    for all $i$, and $Y^T = [y_1, y_2, \dots, y_n] \in \mathbb{R}^{p\times n}$ where
+    $y_i \in \mathbb{R}^p$ for all $i$, $XY = \sum_{i=1}^{n} x_i y_i^T$.
+    We can prove this as follows:
+    \begin{align*}
+        XY &= X \cdot Y \\
+        &= [x_1, x_2, \dots, x_n] \cdot \begin{bmatrix}
+            y_1^T \\
+            y_2^T \\
+            \vdots \\
+            y_n^T
+        \end{bmatrix} \\
+        &= x_1 y_1^T + x_2 y_2^T + \dots + x_n y_n^T \\
+        &= \sum_{i=1}^{n} x_i y_i^T
+    \end{align*}
+
+\section{}
+    Given $X \in \mathbb{R}^{m\times n}$, we can prove $X^TX$ is symmetric and 
+    positive semi-definite as follows:
+    \begin{itemize}
+        \item Symmetric:
+            \begin{align*}
+                (X^TX)^T &= X^T(X^T)^T \\
+                &= X^TX
+            \end{align*}
+        \item Positive semi-definite:
+            For any non-zero vector $z \in \mathbb{R}^n$,
+            \begin{align*}
+                z^T(X^TX)z &= (Xz)^T(Xz) \\
+                &= ||Xz||_2^2 \\
+                &\geq 0
+            \end{align*}
+    \end{itemize}
+
+\section{}
+    Given $g(x, y) = e^{(x + y)} + e^{3xy} + e^{y^4}$, we can compute the partial derivatives
+    as follows:
+    \begin{align*}
+        \frac{\partial g}{\partial x} &= \frac{\partial}{\partial x} \left( e^{(x + y)} + e^{3xy} + e^{y^4} \right) \\
+        &= e^{(x + y)} + 3y e^{3xy} + 0 \\
+        &= e^{(x + y)} + 3y e^{3xy} \\
+        \frac{\partial g}{\partial y} &= \frac{\partial}{\partial y} \left( e^{(x + y)} + e^{3xy} + e^{y^4} \right) \\
+        &= e^{(x + y)} + 3x e^{3xy} + 4y^3 e^{y^4} \\
+        &= e^{(x + y)} + 3x e^{3xy} + 4y^3 e^{y^4}
+    \end{align*}
+
+\section{}
+    Let $A = \begin{bmatrix} 1 & 4 \\ 2 & 3 \end{bmatrix}$.
+    \begin{enumerate}[(a)]
+        \item We compute the eigenvalues and eigenvectors as follows:
+        \begin{align*}
+            \text{det}(A - \lambda I) &= 0 \\
+            \text{det}\begin{bmatrix}
+                1 - \lambda & 4 \\
+                2 & 3 - \lambda
+            \end{bmatrix} &= 0 \\
+            (1 - \lambda)(3 - \lambda) - 8 &= 0 \\
+            \lambda^2 - 4\lambda - 5 &= 0 \\
+            (\lambda - 5)(\lambda + 1) &= 0 \\
+            \lambda_1 &= 5, \quad \lambda_2 = -1
+        \end{align*}
+        For $\lambda_1 = 5$:
+        \begin{align*}
+            (A - 5I)v &= 0 \\
+            \begin{bmatrix}
+                -4 & 4 \\
+                2 & -2
+            \end{bmatrix} \begin{bmatrix}
+                v_1 \\
+                v_2
+            \end{bmatrix} &= 0 \\
+            -4v_1 + 4v_2 &= 0 \\
+            v_1 &= v_2
+        \end{align*}
+        Thus, one eigenvector corresponding to $\lambda_1 = 5$ is $v_1 = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$. \\
+        For $\lambda_2 = -1$:
+        \begin{align*}
+            (A + I)v &= 0 \\
+            \begin{bmatrix}
+                2 & 4 \\
+                2 & 4
+            \end{bmatrix} \begin{bmatrix}
+                v_1 \\
+                v_2
+            \end{bmatrix} &= 0 \\
+            2v_1 + 4v_2 &= 0 \\
+            v_1 &= -2v_2
+        \end{align*}
+        Thus, one eigenvector corresponding to $\lambda_2 = -1$ is $v_2 = \begin{bmatrix} -2 \\ 1 \end{bmatrix}$.
+        \item The eigen-decomposition of $A$ is then:
+        \begin{align*}
+            A &= PDP^{-1} \\
+            P &= \begin{bmatrix}
+                1 & -2 \\
+                1 & 1
+            \end{bmatrix}, \quad D = \begin{bmatrix}
+                5 & 0 \\
+                0 & -1
+            \end{bmatrix} \\
+            A &= \begin{bmatrix}
+                1 & -2 \\
+                1 & 1
+            \end{bmatrix} \begin{bmatrix}
+                5 & 0 \\
+                0 & -1
+            \end{bmatrix} \begin{bmatrix}
+                1 & -2 \\
+                1 & 1
+            \end{bmatrix}^{-1}
+        \end{align*}
+        \item $A$ has rank 2 since its two eigenvalues are non-zero.
+        \item $A$ is not positive definite since it has a negative eigenvalue ($\lambda_2 = -1$).
+        \item $A$ is not positive semi-definite since it has a negative eigenvalue ($\lambda_2 = -1$).
+        \item $A$ is not singular as none of its eigenvalues are zero. Its determinant is:
+        \begin{align*}
+            \text{det}(A) &= \lambda_1 \cdot \lambda_2 \\
+            &= 5 \cdot -1 \\
+            &= -5 \neq 0
+        \end{align*} which also shows it is not singular.
+    \end{enumerate}
+
+\section{}
+    We have linear classifier $h(x) = \text{sign}(w^Tx)$ where $w = [w_0, w_1, w_2]^T$
+    and $x = [1, x_1, x_2]^T$.
+    \begin{enumerate}[(a)]
+        \item We can prove the regions where $h(x) = +1$ and $h(x) = -1$ are separated
+        by a line as follows:
+        \begin{align*}
+            h(x) &= \text{sign}(w^Tx) \\
+            &= \text{sign}(w_0 + w_1x_1 + w_2x_2)
+        \end{align*}
+        This equation is linear in nature, and thus forms a linear decision boundary
+        separating the two regions. \\
+        Expressing the line as $x_2 = ax_1 + b$, the slope $a$ and intercept $b$
+        in terms of $w_0, w_1, w_2$ are:
+        \begin{align*}
+            w_0 + w_1x_1 + w_2x_2 &= 0 \\
+            w_2x_2 &= -w_0 - w_1x_1 \\
+            x_2 &= -\frac{w_1}{w_2}x_1 - \frac{w_0}{w_2} \therefore \\
+            a &= -\frac{w_1}{w_2}, \quad b = -\frac{w_0}{w_2}
+        \end{align*}
+    \end{enumerate}
+
+\section{}
+    See attached Jupyter notebook.
+
+\section{}
+    \begin{enumerate}[(a)]
+        \item Because we are given the blood pressure for 10k patients in the 
+        dataset and corresponding data related to each patient, this is a 
+        supervised learning regression problem.
+        \item The label space consists of two values, the systolic and diastolic
+        blood pressure of each patient $(y_\text{systolic}, y_\text{dystolic}) \in \mathbb{R}^2$.
+        \item The output space is the same as the label space, as the ML system
+        aims to predict both the systolic and dystolic blood pressure values.
+    \end{enumerate}
+
+\section{}
+    \begin{enumerate}[(a)]
+        \item 
+            \begin{tabular}{l|l|c|c|}
+                \multicolumn{2}{c}{} & \multicolumn{2}{c}{Truth} \\
+                \cline{3-4}
+                \multicolumn{2}{c|}{} & Positive (Spam) & Negative (Not Spam) \\
+                \cline{2-4}
+                \multirow{2}{*}{Test}
+                    & Positive (Spam) & 1750 & 250 \\
+                \cline{2-4}
+                    & Negative (Not Spam) & 250 & 7750 \\
+                \cline{2-4}
+            \end{tabular}
+        \item The false positive rate of the system is $250/8000 = 0.03125$.
+        \item The false negative rate of the system is $250/2000 = 0.125$.
+        \item The error rate of the system is $(250 + 250) / 10000 = 0.05$.
+        \item The precision of the system is $1750 / (1750 + 250) = 0.875$.
+        \item The sensitivity of the system is $1750 / (1750 + 250) = 0.875$.
+    \end{enumerate}
+
+\includepdf[pages=-]{hw1_code.pdf}
+
 \end{document}
