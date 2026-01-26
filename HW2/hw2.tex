@@ -1,0 +1,69 @@
+%! Author = Kevin Lin
+%! Date = 2/9/2026
+
+% Preamble
+\documentclass[11pt,a4paper,margin=1in]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+
+\title{HW 2}
+\author{Kevin Lin}
+\date{2/9/2026}
+
+% Document
+\begin{document}
+\maketitle
+
+\section{}
+\begin{enumerate}[(a)]
+    \item The gradient of hinge loss with respect to $w$:
+    \begin{align*}
+        \nabla_w \ell(w^Tx, y) &= \nabla_w \max\{0, 1 - y w^T x\} \\
+        &= \begin{cases}
+            0 & \text{if } y w^T x \geq 1 \\
+            -y x & \text{if } y w^T x < 1
+        \end{cases}
+    \end{align*}
+    \item The gradient of Perceptron loss w.r.t $w$:
+    \begin{align*}
+        \nabla_w \ell(w^Tx, y) &= \nabla_w \max\{0, - y w^T x\} \\
+        &= \begin{cases}
+            0 & \text{if } y w^T x \geq 0 \\
+            -y x & \text{if } y w^T x < 0
+        \end{cases}
+    \end{align*}
+    \item For hinge loss, $w$ is updated only when the margin condition $y w^T x < 1$ 
+    is violated, meaning the prediction is not only incorrect but also not 
+    confident enough. However, for Perceptron loss, the update occurs whenever 
+    the prediction is incorrect (when $y w^T x < 0$). This means that hinge loss 
+    encourages a larger margin between classes while Perceptron loss focuses 
+    solely on correct classification.
+\end{enumerate}
+
+\section{}
+\begin{enumerate}[(a)]
+    \item ROC plot (see Jupyter notebook for code): \\
+    \includegraphics[width=\textwidth]{2a.png}
+    \item Classifier 2 has the highest accuracy of 0.8, while Classifier 6 has 
+    the lowest accuracy of 0.36. See Jupyter notebook for code.
+    \item Classifier 5 has the highest precision of 1, while Classifier 1 has
+    the lowest precision of 0.64. Classifier 6 has undefined precision as it has
+    no true or false positives. See Jupyter notebook for code.
+    \item Classifier 1 F1 score: 0.78 \\
+    Classifier 2 F1 score: 0.86 \\
+    Classifier 3 F1 score: 0.81 \\
+    Classifier 4 F1 score: 0.71 \\
+    Classifier 5 F1 score: 0.4 \\
+    Classifier 6 F1 score: Undefined for the same reasons as precision.\\
+    See Jupyter notebook for code.
+\end{enumerate}
+
+\section{}
+
+
+\end{document}
