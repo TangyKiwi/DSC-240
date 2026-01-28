@@ -64,6 +64,30 @@
 \end{enumerate}
 
 \section{}
+See Jupyter notebook for code and plots.
 
+\section{}
+\begin{enumerate}[(a)]
+    \item We can derive the optimal $\textbf{w}^*$ that minimizes $E_2{\textbf{w}}$ as follows:
+    \begin{align*}
+        E_2(\textbf{w}) &= \frac{1}{N} \|\textbf{Xw} - \textbf{y}\|^2_2 + \lambda \|\textbf{w}\|^2_2 \\
+        &= \frac{1}{N} (\textbf{Xw} - \text{y})^T (\textbf{Xw} - \textbf{y}) + \lambda \textbf{w}^T \textbf{w} \\
+        &= \frac{1}{N} (\textbf{w}^T \textbf{X}^T \textbf{Xw} - 2 \textbf{y}^T \textbf{Xw} + \textbf{y}^T \textbf{y}) + \lambda \textbf{w}^T \textbf{w}
+    \end{align*}
+    Taking the gradient with respect to $\textbf{w}$ and setting it to zero:
+    \begin{align*}
+        \nabla_{\textbf{w}} E_2(\textbf{w}) &= \frac{2}{N} \textbf{X}^T \textbf{Xw} - \frac{2}{N} \textbf{X}^T \textbf{y} + 2 \lambda \textbf{w} = 0 \\
+        &= (\textbf{X}^T \textbf{X} + N \lambda \textbf{I}) \textbf{w} = \textbf{X}^T \textbf{y} \\
+        \textbf{w}^* &= (\textbf{X}^T \textbf{X} + N \lambda \textbf{I})^{-1} \textbf{X}^T \textbf{y}
+    \end{align*}
+    \item This new objective function overcomes the singularity issue by adding
+    the term $\lambda \|\textbf{w}\|^2_2$, which effectively adds $\lambda \textbf{I}$ to the matrix 
+    $\textbf{X}^T \textbf{X}$. This addition ensures that the matrix 
+    $\textbf{X}^T \textbf{X} + N \lambda \textbf{I}$ is positive definite and invertible, even if 
+    $\textbf{X}^T \textbf{X}$ is singular. The regularization term penalizes large weights,
+    promoting stability and preventing overfitting.
+\end{enumerate}
+
+\section{}
 
 \end{document}
