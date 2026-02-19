@@ -132,6 +132,64 @@ returns a number between $[0, 1]$.
 \end{enumerate}
 
 \section{}
+\begin{enumerate}[(a)]
+    \item We know that data from class A are Gaussian $\mathcal{N}(\mu_1, I_d)$
+    and data from class B are also Gaussian $\mathcal{N}(\mu_2, I_d)$, where the
+    prior probabilities of both classes are equal. We can derive the posterior
+    probability $P(y|x)$ for each class using Bayes' theorem:
+    \begin{gather*}
+        P(y|x) = \frac{P(x|y)P(y)}{P(x)} \\
+        P(x) = P(x|y=0)P(y=0) + P(x|y=1)P(y=1) \\
+        P(y=0|x) = \frac{P(x|y=0)P(y=0)}{P(x|y=0)P(y=0) + P(x|y=1)P(y=1)} \\
+        P(y=1|x) = \frac{P(x|y=1)P(y=1)}{P(x|y=0)P(y=0) + P(x|y=1)P(y=1)} \\
+    \end{gather*}
+    Since the prior probabilities are equal, we can simplify this to:
+    \begin{gather*}
+        P(y=0|x) = \frac{P(x|y=0)}{P(x|y=0) + P(x|y=1)} \\
+        P(y=1|x) = \frac{P(x|y=1)}{P(x|y=0) + P(x|y=1)} \\
+    \end{gather*}
+    We can further simplify this by substituting the Gaussian probability density
+    functions for $P(x|y=0)$ and $P(x|y=1)$:
+    \begin{gather*}
+        P(x|y=0) = \frac{1}{(2\pi)^{d/2}} e^{-\frac{1}{2}\|x-\mu_1\|^2} \\
+        P(x|y=1) = \frac{1}{(2\pi)^{d/2}} e^{-\frac{1}{2}\|x-\mu_2\|^2} \\
+    \end{gather*}
+    Thus, the posterior probabilities can be expressed as:
+    \begin{gather*}
+        P(y=0|x) = \frac{e^{-\frac{1}{2}\|x-\mu_1\|^2}}{e^{-\frac{1}{2}\|x-\mu_1\|^2} + e^{-\frac{1}{2}\|x-\mu_2\|^2}} \\
+        P(y=1|x) = \frac{e^{-\frac{1}{2}\|x-\mu_2\|^2}}{e^{-\frac{1}{2}\|x-\mu_1\|^2} + e^{-\frac{1}{2}\|x-\mu_2\|^2}} \\
+    \end{gather*}
+    The decision rule for the Bayes optimal classifier is to assign $x$ to class 
+    A if $P(y=0|x) > P(y=1|x)$ and to class B otherwise. This can be simplified 
+    to:
+    \begin{gather*}
+        P(y=0|x) > P(y=1|x) \\
+        \frac{e^{-\frac{1}{2}\|x-\mu_1\|^2}}{e^{-\frac{1}{2}\|x-\mu_1\|^2} + e^{-\frac{1}{2}\|x-\mu_2\|^2}} > \frac{e^{-\frac{1}{2}\|x-\mu_2\|^2}}{e^{-\frac{1}{2}\|x-\mu_1\|^2} + e^{-\frac{1}{2}\|x-\mu_2\|^2}} \\
+        e^{-\frac{1}{2}\|x-\mu_1\|^2} > e^{-\frac{1}{2}\|x-\mu_2\|^2} \\
+        -\frac{1}{2}\|x-\mu_1\|^2 > -\frac{1}{2}\|x-\mu_2\|^2 \\
+        \|x-\mu_1\|^2 < \|x-\mu_2\|^2 \\
+    \end{gather*}
+    Thus, the decision boundary is the set of points $x$ such that:
+    \[
+        \|x-\mu_1\|^2 = \|x-\mu_2\|^2
+    \]
+    This is the equation of a hyperplane that is equidistant from the two means 
+    $\mu_1$ and $\mu_2$. We can simplify this further by expanding the norms:
+    \begin{gather*}
+        (x-\mu_1)^T(x-\mu_1) = (x-\mu_2)^T(x-\mu_2) \\
+        x^T x - 2\mu_1^T x + \mu_1^T \mu_1 = x^T x - 2\mu_2^T x + \mu_2^T \mu_2 \\
+        - 2\mu_1^T x + \mu_1^T \mu_1 = - 2\mu_2^T x + \mu_2^T \mu_2 \\
+        2(\mu_2 - \mu_1)^T x = \mu_2^T \mu_2 - \mu_1^T \mu_1 \\
+        (\mu_2 - \mu_1)^T x = \frac{1}{2}(\mu_2^T \mu_2 - \mu_1^T \mu_1) \\
+    \end{gather*}
+    Given that $\mu_1 = (0, 0)$ and $\mu_2 = (1, 1)$, we can substitute these 
+    values into the equation for the decision boundary:
+    \begin{gather*}
+        (\mu_2 - \mu_1)^T x = \frac{1}{2}(\mu_2^T \mu_2 - \mu_1^T \mu_1) \\
+        (1, 1)^T x = \frac{1}{2}(1^2 + 1^2 - 0^2 - 0^2) \\
+        x_1 + x_2 = 1 \\
+    \end{gather*}
+\end{enumerate}
 
 \section{}
 \begin{enumerate}[(a)]

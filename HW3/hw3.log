@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  11 FEB 2026 10:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  18 FEB 2026 10:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -250,49 +250,51 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 [3]
 
+[4]
+
+[5]
+
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 140.
+               Default added (so using `tbp') on input line 198.
 
 
-Underfull \hbox (badness 1502) in paragraph at lines 158--158
+Underfull \hbox (badness 1502) in paragraph at lines 216--216
 []\OT1/cmr/m/n/10.95 Each fea-ture has mixed
  []
 
 
-Underfull \hbox (badness 4108) in paragraph at lines 158--158
+Underfull \hbox (badness 4108) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 over-lap be-tween 1 and
  []
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 158--158
+Underfull \hbox (badness 1158) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 pen-dent, they are mod-
  []
 
 
-Underfull \hbox (badness 2237) in paragraph at lines 158--158
+Underfull \hbox (badness 2237) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 rec-og-nize this and thus
  []
 
 
-Underfull \hbox (badness 1533) in paragraph at lines 158--158
+Underfull \hbox (badness 1533) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 match the el-lipse struc-
  []
 
 
-Underfull \hbox (badness 1320) in paragraph at lines 158--158
+Underfull \hbox (badness 1320) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 sep-a-ra-ble. Thus again,
  []
 
 
-Underfull \hbox (badness 1635) in paragraph at lines 158--158
+Underfull \hbox (badness 1635) in paragraph at lines 216--216
 \OT1/cmr/m/n/10.95 i-mizes er-ror but can-not
  []
 
 
 
-[4]
-
-[5] (./hw3.aux)
+[6] (./hw3.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -306,11 +308,11 @@ Here is how much of TeX's memory you used:
  565934 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  68i,11n,77p,322b,361s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on hw3.pdf (5 pages, 144498 bytes).
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on hw3.pdf (6 pages, 158282 bytes).
 PDF statistics:
- 90 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 98 PDF objects out of 1000 (max. 8388607)
+ 59 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
