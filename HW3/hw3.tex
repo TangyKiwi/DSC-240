@@ -132,6 +132,7 @@ returns a number between $[0, 1]$.
 \end{enumerate}
 
 \section{}
+See attached Jupyter notebook for code and plots.
 \begin{enumerate}[(a)]
     \item We know that data from class A are Gaussian $\mathcal{N}(\mu_1, I_d)$
     and data from class B are also Gaussian $\mathcal{N}(\mu_2, I_d)$, where the
@@ -189,13 +190,68 @@ returns a number between $[0, 1]$.
         (1, 1)^T x = \frac{1}{2}(1^2 + 1^2 - 0^2 - 0^2) \\
         x_1 + x_2 = 1 \\
     \end{gather*}
+    \item If the prior probabilities are not equal, the Bayes optimal classifier
+    decides based on which class has the highest posterior probability. Thus, the
+    decision rule becomes:
+    \begin{gather*}
+        P(y=0|x) > P(y=1|x) \\
+        P(x|y=0)P(y=0) > P(x|y=1)P(y=1) \\
+    \end{gather*}
+    as per our derivation of the posteriors in part (a), where we can cancel
+    out the common denominator. We can then simplify this to:
+    \begin{gather*}
+        P(x|y=0)p > P(x|y=1)(1-p) \\
+        \log{P(x|y=0)} + \log{p} > \log{P(x|y=1)} + \log{(1-p)} \\
+        -\frac{1}{2}\|x-\mu_1\|^2 + \log{p} > -\frac{1}{2}\|x-\mu_2\|^2 + \log{(1-p)} \\
+        \|x-\mu_1\|^2 - \|x-\mu_2\|^2 < 2(\log{p} - \log{(1-p)}) \\
+        2(\mu_2 - \mu_1)^Tx + (\|\mu_1\|^2 - \|\mu_2\|^2) < 2(\log{p} - \log{(1-p)}) \\
+        (\mu_2 - \mu_1)^Tx < \frac{1}{2}(\|\mu_2\|^2 - \|\mu_1\|^2) + \log{\frac{p}{1-p}} \\
+    \end{gather*}
+    For the specific case where $\mu_1 = (0, 0)$ and $\mu_2 = (1, 1)$, and $p = 0.8$, 
+    we get:
+    \begin{gather*}
+        (1, 1)^T x < \frac{1}{2}(1^2 + 1^2 - 0^2 - 0^2) + \log{\frac{p}{1-p}} \\
+        x_1 + x_2 < 1 + \log{\frac{p}{1-p}} \\
+    \end{gather*}
+    \item If the covariance matrix for class A is $\sigma^2I_d$ while class B's
+    matrix is just $I_d$, the Bayes optimal classifier still chooses the
+    larger posterior probability:
+    \begin{gather*}
+        \log P(x|y=0) + \log{p} > \log P(x|y=1) + \log{(1-p)} \\
+        -\frac{d}{2}\log{2\pi} - \frac{d}{2}\log{\sigma^2} - \frac{1}{2\sigma^2}\|x - \mu_1\|^2 + \log{p} > -\frac{d}{2}\log{2\pi} - \frac{1}{2}\|x - \mu_2\|^2 + \log{(1-p)} \\
+        \log{\frac{p}{1-p}} - \frac{d}{2}\log{\sigma^2} - \frac{1}{2\sigma^2}\|x - \mu_1\|^2 + \frac{1}{2}\|x - \mu_2\|^2 > 0
+    \end{gather*}
+    For the specific case where $\mu_1 = (0, 0)$ and $\mu_2 = (1, 1)$, $p = 0.5$, 
+    and $\sigma^2 = 0.25$, we get ($d = 2$):
+    \begin{gather*}
+        -\log{0.25} + \frac{1}{2 \cdot 0.25} \|x\|^2 - \frac{1}{2} \|x - (1, 1)\|^2 > 0 \\
+        -\log{0.25} - 2\|x\|^2 + \frac{1}{2} \|x - (1, 1)\|^2 > 0 \\
+    \end{gather*}
+    \item Now, if $\mu_1 = \mu_2 = (0, 0)$, with $p = 0.5$, $\sigma^2 = 0.25$, 
+    the decision boundary is:
+    \begin{gather*}
+        -\log{0.25} - 2\|x\|^2 + \frac{1}{2} \|x\|^2 > 0 \\
+        -\log{0.25} - \frac{3}{2}\|x\|^2 > 0 \\
+        \|x\|^2 < -\frac{2}{3}\log{0.25}
+    \end{gather*}
+    \item All the decision boundaries we derived in parts (a) through (d) can be
+    realized by a Gaussian Naive Bayes classifier. This is because they have either
+    equal covariance matrices, diagonal covariance matrices, and have no
+    cross-feature correlations, which are all assumptions of the GNB model. For
+    the linear cases of (a) and (b), the decision boundary is a hyperplane,
+    which can be modeled by GNB with equal covariance matrices, even if the priors
+    are unequal. For the quadratic cases of (c) and (d), the decision boundary
+    is a perfect circle, which can be modeled by GNB as the covariance matrices
+    are diagonal and scaled identitically, so there are no cross-feature correlations 
+    and the variance is the same across both features. Thus, GNB can model all of
+    these decision boundaries.
 \end{enumerate}
 
 \section{}
 \begin{enumerate}[(a)]
     \item See attached Jupyter notebook for code and plots.
     \item 
-\begin{table}[]
+\begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{|c|p{0.35\textwidth}|p{0.35\textwidth}|}
@@ -216,4 +272,7 @@ Dataset &
 }
 \end{table}
 \end{enumerate}
+
+\includepdf[pages=-]{hw3_code.pdf}
+
 \end{document}
