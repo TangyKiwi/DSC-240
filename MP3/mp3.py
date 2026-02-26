@@ -9,10 +9,12 @@ from typing import List, Dict, Tuple
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, FunctionTransformer
 from sklearn.compose import ColumnTransformer
+from sklearn.compose import make_column_selector as selector
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.impute import SimpleImputer
 
 from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
 
 np.random.seed(0)
 
@@ -57,22 +59,13 @@ def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
     return X
 
 def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
-    numeric_cols = [
-        "AMT_INCOME_TOTAL", "DAYS_BIRTH", "DAYS_EMPLOYED",
-        "AGE_YEARS", "EMPLOYED_YEARS", "LOG_INCOME",
-        "INCOME_PER_CHILD", "INCOME_PER_FAM", "EMPLOY_AGE_RATIO", "LOGINC_X_EMPLOY"
-    ]
-    numeric_cols = [c for c in numeric_cols if c in X.columns]
-
-    categorical_cols = [c for c in X.columns if c not in set(numeric_cols)]
-
     preprocess = ColumnTransformer(
         transformers=[
-            ("num", SimpleImputer(strategy="median"), numeric_cols),
+            ("num", SimpleImputer(strategy="median"), selector(dtype_include=np.number)),
             ("cat", Pipeline(steps=[
                 ("imputer", SimpleImputer(strategy="most_frequent")),
                 ("ohe", OneHotEncoder(handle_unknown="ignore", sparse_output=True)),
-            ]), categorical_cols),
+            ]), selector(dtype_exclude=np.number)),
         ],
         remainder="drop",
         sparse_threshold=0.3,
@@ -82,23 +75,40 @@ def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
     neg = np.sum(y == 0)
     scale_pos_weight = (neg / max(pos, 1))
 
-    clf = XGBClassifier(
-            n_estimators=1500,
-            learning_rate=0.03,
-            max_depth=5,
-            min_child_weight=3,
-            subsample=0.85,
-            colsample_bytree=0.85,
-            reg_lambda=2.0,
-            reg_alpha=0.0,
-            gamma=0.0,
-            objective="binary:logistic",
-            eval_metric="logloss",
-            tree_method="hist",
-            scale_pos_weight=scale_pos_weight,
-            random_state=0,
-            n_jobs=-1
-        )
+    # clf = XGBClassifier(
+    #         n_estimators=1500,
+    #         learning_rate=0.03,
+    #         max_depth=5,
+    #         min_child_weight=3,
+    #         subsample=0.85,
+    #         colsample_bytree=0.85,
+    #         reg_lambda=2.0,
+    #         reg_alpha=0.0,
+    #         gamma=0.0,
+    #         objective="binary:logistic",
+    #         eval_metric="logloss",
+    #         tree_method="hist",
+    #         scale_pos_weight=scale_pos_weight,
+    #         random_state=0,
+    #         n_jobs=-1
+    #     )
+
+    clf = LGBMClassifier(
+        n_estimators=4000,
+        learning_rate=0.02,
+        num_leaves=63,
+        max_depth=-1,
+        min_child_samples=30,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        reg_lambda=2.0,
+        reg_alpha=0.0,
+        scale_pos_weight=scale_pos_weight,
+        objective="binary",
+        metric="None",
+        random_state=0,
+        n_jobs=-1
+    )
 
     pipe = Pipeline(steps=[
         ("feat", FunctionTransformer(feature_engineer, validate=False)),
