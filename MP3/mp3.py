@@ -49,12 +49,18 @@ def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
     inc = pd.to_numeric(X["AMT_INCOME_TOTAL"], errors="coerce")
     X["LOG_INCOME"] = np.log1p(np.maximum(0, inc))
 
+    X["INCOME_PER_CHILD"] = inc / (1.0 + pd.to_numeric(X["CNT_CHILDREN"], errors="coerce").fillna(0))
+    X["INCOME_PER_FAM"] = inc / (1.0 + pd.to_numeric(X["CNT_FAM_MEMBERS"], errors="coerce").fillna(0))
+    X["EMPLOY_AGE_RATIO"] = X["EMPLOYED_YEARS"] / (X["AGE_YEARS"] + 1e-6)
+    X["LOGINC_X_EMPLOY"] = X["LOG_INCOME"] * X["EMPLOYED_YEARS"]
+
     return X
 
 def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
     numeric_cols = [
         "AMT_INCOME_TOTAL", "DAYS_BIRTH", "DAYS_EMPLOYED",
         "AGE_YEARS", "EMPLOYED_YEARS", "LOG_INCOME",
+        "INCOME_PER_CHILD", "INCOME_PER_FAM", "EMPLOY_AGE_RATIO", "LOGINC_X_EMPLOY"
     ]
     numeric_cols = [c for c in numeric_cols if c in X.columns]
 
@@ -76,8 +82,7 @@ def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
     neg = np.sum(y == 0)
     scale_pos_weight = (neg / max(pos, 1))
 
-    def make_xgb(device: str):
-        return XGBClassifier(
+    clf = XGBClassifier(
             n_estimators=1500,
             learning_rate=0.03,
             max_depth=5,
@@ -90,16 +95,10 @@ def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
             objective="binary:logistic",
             eval_metric="logloss",
             tree_method="hist",
-            device=device,
             scale_pos_weight=scale_pos_weight,
             random_state=0,
             n_jobs=-1
         )
-    try:
-        clf = make_xgb("cuda")
-        _ = clf.get_params()
-    except Exception:
-        clf = make_xgb("cpu")
 
     pipe = Pipeline(steps=[
         ("feat", FunctionTransformer(feature_engineer, validate=False)),
@@ -143,7 +142,10 @@ def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> L
     """
     train = training_data.copy()
     y = train["target"].astype(int).values
-    X = train.drop(columns=["target"])
+    X = train.drop(columns=["target", "QUANTIZED_INC", "QUANTIZED_AGE", "QUANTIZED_WORK_YEAR"])
+
+    test = testing_data.copy()
+    X_test = test.drop(columns=["QUANTIZED_INC", "QUANTIZED_AGE", "QUANTIZED_WORK_YEAR"])
 
     pipe = build_pipeline(X, y)
 
@@ -152,7 +154,7 @@ def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> L
     thresh = f1_threshold(y, oof_prob)
 
     pipe.fit(X, y)
-    test_prob = pipe.predict_proba(testing_data)[:, 1]
+    test_prob = pipe.predict_proba(X_test)[:, 1]
     test_pred = (test_prob >= thresh).astype(int)
     return test_pred
 
