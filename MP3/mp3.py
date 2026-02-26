@@ -13,6 +13,8 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 
+from xgboost import XGBClassifier
+
 np.random.seed(0)
 
 def compute_metric(labels, expected):
@@ -51,81 +53,93 @@ def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
     return X
 
 def build_pipeline(X: pd.DataFrame) -> Pipeline:
-    binary_cols = [
-        "CODE_GENDER", "FLAG_OWN_CAR", "FLAG_OWN_REALTY", "FLAG_MOBIL",
-        "FLAG_WORK_PHONE", "FLAG_PHONE", "FLAG_EMAIL", "UNEMLOYED_FLAG"
-    ]
-
     numeric_cols = [
-        "AMT_INCOME_TOTAL", "DAYS_BIRTH", "DAYS_EMPLOYED", "AGE_YEARS", 
-        "EMPLOYED_YEARS", "LOG_INCOME"
+        "AMT_INCOME_TOTAL", "DAYS_BIRTH", "DAYS_EMPLOYED",
+        "AGE_YEARS", "EMPLOY_YEARS", "LOG_INCOME",
     ]
+    numeric_cols = [c for c in numeric_cols if c in X.columns]
 
-    known = set(binary_cols + numeric_cols)
-    categorical_cols = [col for col in X.columns if col not in known]
-
-    binary_cols = [col for col in binary_cols if col in X.columns]
-    numeric_cols = [col for col in numeric_cols if col in X.columns]
-    categorical_cols = [col for col in categorical_cols if col in X.columns]
-
-    cat_ohe = OneHotEncoder(handle_unknown="ignore", sparse_output=True)
+    # everything else -> categorical (safe & strong with trees + one-hot)
+    categorical_cols = [c for c in X.columns if c not in set(numeric_cols)]
 
     preprocess = ColumnTransformer(
         transformers=[
-            ("num",
-             Pipeline(steps=[
-                ("imputer", SimpleImputer(strategy="median")),
-                ("scaler", StandardScaler(with_mean=False)),
-             ]), numeric_cols),
-            ("bin",
-             Pipeline(steps=[
+            ("num", SimpleImputer(strategy="median"), numeric_cols),
+            ("cat", Pipeline(steps=[
                 ("imputer", SimpleImputer(strategy="most_frequent")),
-                ("ohe", OneHotEncoder(handle_unknown="ignore", drop="if_binary", sparse_output=True)),
-              ]), binary_cols),
-            ("cat",
-             Pipeline(steps=[
-                ("imputer", SimpleImputer(strategy="most_frequent")),
-                ("ohe", cat_ohe),
-             ]), categorical_cols),
-        ], 
-        remainder="drop", 
-        sparse_threshold=0.3
+                ("ohe", OneHotEncoder(handle_unknown="ignore", sparse_output=True)),
+            ]), categorical_cols),
+        ],
+        remainder="drop",
+        sparse_threshold=0.3,
     )
 
-    clf = LogisticRegression(
-        solver="saga",
-        penalty="l2",
-        C=2.0,
-        class_weight="balanced",
-        max_iter=5000,
-        n_jobs=-1,
-        random_state=0
-    )
+    pos = np.sum(y == 1)
+    neg = np.sum(y == 0)
+    scale_pos_weight = (neg / max(pos, 1))
+
+    try:
+        xgb = XGBClassifier(
+            n_estimators=1200,
+            learning_rate=0.03,
+            max_depth=5,
+            min_child_weight=3,
+            subsample=0.85,
+            colsample_bytree=0.85,
+            reg_alpha=0.0,
+            reg_lambda=1.0,
+            gamma=0.0,
+            objective="binary:logistic",
+            eval_metric="logloss",
+            tree_method="gpu_hist",
+            predictor="gpu_predictor",
+            scale_pos_weight=scale_pos_weight,
+            random_state=0,
+            n_jobs=-1,
+        )
+        _ = xgb.get_params()
+    except Exception:
+        xgb = XGBClassifier(
+            n_estimators=1200,
+            learning_rate=0.03,
+            max_depth=5,
+            min_child_weight=3,
+            subsample=0.85,
+            colsample_bytree=0.85,
+            reg_alpha=0.0,
+            reg_lambda=1.0,
+            gamma=0.0,
+            objective="binary:logistic",
+            eval_metric="logloss",
+            tree_method="hist",
+            scale_pos_weight=scale_pos_weight,
+            random_state=0,
+            n_jobs=-1,
+        )
 
     pipe = Pipeline(steps=[
         ("feat", FunctionTransformer(feature_engineer, validate=False)),
         ("preprocess", preprocess),
-        ("clf", clf),
+        ("clf", xgb),
     ])
-
     return pipe
 
 def f1_threshold(y_true: np.ndarray, prob_pos: np.ndarray) -> float:
-    unique = np.unique(prob_pos)
-    if len(unique) > 2000:
-        qs = np.linspace(0.0, 1.0, 2001)
-        cand = np.quantile(prob_pos, qs)
-        cand = np.unique(cand)
-    else:
-        cand = unique
+    qs = np.linspace(0.0, 1.0, 2001)
+    cand = np.unique(np.quantile(prob_pos, qs))
 
     best_t, best_f1 = 0.5, -1.0
     for t in cand:
         pred = (prob_pos >= t).astype(int)
-        metric = compute_metric(pred, y_true)
-        if metric["f1"] > best_f1:
-            best_f1 = metric["f1"]
-            best_t = t
+
+        tp = np.sum((pred == 1) & (y_true == 1))
+        fp = np.sum((pred == 1) & (y_true == 0))
+        fn = np.sum((pred == 0) & (y_true == 1))
+        denom = 2 * tp + fp + fn
+        f1 = (2 * tp / denom) if denom > 0 else 0.0
+
+        if f1 > best_f1:
+            best_f1, best_t = f1, float(t)
 
     return best_t
 
@@ -147,17 +161,16 @@ def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> L
     y = train["target"].astype(int).values
     X = train.drop(columns=["target"])
 
-    pipe = build_pipeline(X)
+    pipe = build_pipeline(X, y)
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
     oof_prob = cross_val_predict(pipe, X, y, cv=cv, method="predict_proba", n_jobs=-1)[:, 1]
-    threshold = f1_threshold(y, oof_prob)
+    thresh = f1_threshold(y, oof_prob)
 
     pipe.fit(X, y)
     test_prob = pipe.predict_proba(testing_data)[:, 1]
-    test_pred = (test_prob >= threshold).astype(int)    
-
-    return test_pred
+    test_pred = (test_prob >= thresh).astype(int)
+    return test_pred.tolist()
 
 
 if __name__ == '__main__':
