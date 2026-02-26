@@ -14,7 +14,6 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.impute import SimpleImputer
 
 from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
 
 np.random.seed(0)
 
@@ -75,40 +74,23 @@ def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
     neg = np.sum(y == 0)
     scale_pos_weight = (neg / max(pos, 1))
 
-    # clf = XGBClassifier(
-    #         n_estimators=1500,
-    #         learning_rate=0.03,
-    #         max_depth=5,
-    #         min_child_weight=3,
-    #         subsample=0.85,
-    #         colsample_bytree=0.85,
-    #         reg_lambda=2.0,
-    #         reg_alpha=0.0,
-    #         gamma=0.0,
-    #         objective="binary:logistic",
-    #         eval_metric="logloss",
-    #         tree_method="hist",
-    #         scale_pos_weight=scale_pos_weight,
-    #         random_state=0,
-    #         n_jobs=-1
-    #     )
-
-    clf = LGBMClassifier(
-        n_estimators=4000,
-        learning_rate=0.02,
-        num_leaves=63,
-        max_depth=-1,
-        min_child_samples=30,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        reg_lambda=2.0,
-        reg_alpha=0.0,
-        scale_pos_weight=scale_pos_weight,
-        objective="binary",
-        metric="None",
-        random_state=0,
-        n_jobs=-1
-    )
+    clf = XGBClassifier(
+            n_estimators=1500,
+            learning_rate=0.03,
+            max_depth=5,
+            min_child_weight=3,
+            subsample=0.85,
+            colsample_bytree=0.85,
+            reg_lambda=2.0,
+            reg_alpha=0.0,
+            gamma=0.0,
+            objective="binary:logistic",
+            eval_metric="logloss",
+            tree_method="hist",
+            scale_pos_weight=scale_pos_weight,
+            random_state=0,
+            n_jobs=-1
+        )
 
     pipe = Pipeline(steps=[
         ("feat", FunctionTransformer(feature_engineer, validate=False)),
@@ -134,6 +116,7 @@ def f1_threshold(y_true: np.ndarray, prob_pos: np.ndarray) -> float:
         if f1 > best_f1:
             best_f1, best_t = f1, float(t)
 
+    print(f"Best F1: {best_f1:.4f} at threshold {best_t:.4f}")
     return best_t
 
 def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> List[int]:
