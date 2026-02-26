@@ -11,7 +11,6 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler, FunctionTransfo
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression
 
 from xgboost import XGBClassifier
 
@@ -52,14 +51,13 @@ def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
 
     return X
 
-def build_pipeline(X: pd.DataFrame) -> Pipeline:
+def build_pipeline(X: pd.DataFrame, y: np.ndarray) -> Pipeline:
     numeric_cols = [
         "AMT_INCOME_TOTAL", "DAYS_BIRTH", "DAYS_EMPLOYED",
-        "AGE_YEARS", "EMPLOY_YEARS", "LOG_INCOME",
+        "AGE_YEARS", "EMPLOYED_YEARS", "LOG_INCOME",
     ]
     numeric_cols = [c for c in numeric_cols if c in X.columns]
 
-    # everything else -> categorical (safe & strong with trees + one-hot)
     categorical_cols = [c for c in X.columns if c not in set(numeric_cols)]
 
     preprocess = ColumnTransformer(
@@ -78,49 +76,35 @@ def build_pipeline(X: pd.DataFrame) -> Pipeline:
     neg = np.sum(y == 0)
     scale_pos_weight = (neg / max(pos, 1))
 
-    try:
-        xgb = XGBClassifier(
-            n_estimators=1200,
+    def make_xgb(device: str):
+        return XGBClassifier(
+            n_estimators=1500,
             learning_rate=0.03,
             max_depth=5,
             min_child_weight=3,
             subsample=0.85,
             colsample_bytree=0.85,
+            reg_lambda=2.0,
             reg_alpha=0.0,
-            reg_lambda=1.0,
-            gamma=0.0,
-            objective="binary:logistic",
-            eval_metric="logloss",
-            tree_method="gpu_hist",
-            predictor="gpu_predictor",
-            scale_pos_weight=scale_pos_weight,
-            random_state=0,
-            n_jobs=-1,
-        )
-        _ = xgb.get_params()
-    except Exception:
-        xgb = XGBClassifier(
-            n_estimators=1200,
-            learning_rate=0.03,
-            max_depth=5,
-            min_child_weight=3,
-            subsample=0.85,
-            colsample_bytree=0.85,
-            reg_alpha=0.0,
-            reg_lambda=1.0,
             gamma=0.0,
             objective="binary:logistic",
             eval_metric="logloss",
             tree_method="hist",
+            device=device,
             scale_pos_weight=scale_pos_weight,
             random_state=0,
-            n_jobs=-1,
+            n_jobs=-1
         )
+    try:
+        clf = make_xgb("cuda")
+        _ = clf.get_params()
+    except Exception:
+        clf = make_xgb("cpu")
 
     pipe = Pipeline(steps=[
         ("feat", FunctionTransformer(feature_engineer, validate=False)),
         ("preprocess", preprocess),
-        ("clf", xgb),
+        ("clf", clf),
     ])
     return pipe
 
@@ -170,7 +154,7 @@ def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> L
     pipe.fit(X, y)
     test_prob = pipe.predict_proba(testing_data)[:, 1]
     test_pred = (test_prob >= thresh).astype(int)
-    return test_pred.tolist()
+    return test_pred
 
 
 if __name__ == '__main__':
