@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import f1_score
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -129,7 +129,7 @@ class CreditRiskF1Classifier(BaseEstimator, ClassifierMixin):
 
         numeric_pipe = Pipeline(steps=[
             ("imputer", SimpleImputer(strategy="median")),
-            ("scaler", StandardScaler(with_mean=False)),  # safe w/ sparse combos
+            # ("scaler", StandardScaler(with_mean=False)),  # safe w/ sparse combos
         ])
 
         categorical_pipe = Pipeline(steps=[
@@ -149,12 +149,12 @@ class CreditRiskF1Classifier(BaseEstimator, ClassifierMixin):
         # Default model params tuned for tabular + imbalance
         params = dict(
             loss="log_loss",
-            learning_rate=0.06,
-            max_iter=500,
-            max_leaf_nodes=31,
+            learning_rate=0.03,
+            max_iter=1200,
+            max_leaf_nodes=64,
             max_depth=None,
-            min_samples_leaf=30,
-            l2_regularization=0.1,
+            min_samples_leaf=5,
+            l2_regularization=0.0,
             random_state=self.random_state,
             early_stopping=True,
             validation_fraction=0.1,
@@ -180,6 +180,8 @@ class CreditRiskF1Classifier(BaseEstimator, ClassifierMixin):
         n_neg = max(int((y == 0).sum()), 1)
         w_pos = n / (2.0 * n_pos)
         w_neg = n / (2.0 * n_neg)
+        w_pos = 3 # hard setting seems to be better
+        w_neg = 1
         return np.where(y == 1, w_pos, w_neg).astype(float)
 
     def _tune_threshold(self, y_true: np.ndarray, proba: np.ndarray) -> float:
