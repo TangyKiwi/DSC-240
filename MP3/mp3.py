@@ -1,4 +1,3 @@
-# Starter code for DSC 240 MP3 - upgraded solution (sklearn only)
 import numpy as np
 import pandas as pd
 from typing import List, Optional, Dict, Any
@@ -18,7 +17,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
     def __init__(self):
-        # quantized columns listed in data.md :contentReference[oaicite:2]{index=2}
         self.drop_cols = ["QUANTIZED_INC", "QUANTIZED_AGE", "QUANTIZED_WORK_YEAR"]
 
     def fit(self, X, y=None):
@@ -41,11 +39,11 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         fam_members = X["CNT_FAM_MEMBERS"].astype(float) if "CNT_FAM_MEMBERS" in X.columns else pd.Series(np.nan, index=X.index)
 
         # ---- add: age_years ----
-        # DAYS_BIRTH counts backwards from 0, so typically negative; convert to positive years :contentReference[oaicite:3]{index=3}
+        # DAYS_BIRTH counts backwards from 0, so typically negative; convert to positive years
         X["age_years"] = (-days_birth / 365.25)
 
         # ---- add: unemployed_flag (categorical) ----
-        # DAYS_EMPLOYED positive => currently unemployed :contentReference[oaicite:4]{index=4}
+        # DAYS_EMPLOYED positive => currently unemployed
         unemployed = (days_employed > 0)
         X["unemployed_flag"] = np.where(unemployed, "Y", "N").astype(object)
 
@@ -75,14 +73,14 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
 def compute_metric(labels, expected):
     tp = np.sum(labels[expected == 1])
     fp = np.sum(labels[expected == 0])
-    tn = np.sum(1 - labels[expected == 0])
-    fn = np.sum(1 - labels[expected == 1])
-    tpr = tp / (tp + fn + 1e-12)
-    fpr = fp / (fp + tn + 1e-12)
-    error_rate = (fp + fn) / (tp + fp + tn + fn + 1e-12)
-    accuracy = (tp + tn) / (tp + fp + tn + fn + 1e-12)
-    precision = tp / (tp + fp + 1e-12)
-    f1 = 2 * tp / (2 * tp + fp + fn + 1e-12)
+    tn = np.sum(1-labels[expected == 0])
+    fn = np.sum(1-labels[expected == 1])
+    tpr = tp/(tp+fn)
+    fpr = fp/(fp+tn)
+    error_rate = (fp+fn)/(tp+fp+tn+fn)
+    accuracy = (tp+tn)/(tp+fp+tn+fn)
+    precision = tp/(tp+fp)
+    f1 = 2*tp/(2*tp+fp+fn)
 
     return {
         "f1": f1,
@@ -247,10 +245,6 @@ class CreditRiskF1Classifier(BaseEstimator, ClassifierMixin):
 
 
 def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> List[int]:
-    """
-    Train on training_data (includes target) and return predictions on testing_data.
-    Keep this signature unchanged (Gradescope requirement).
-    """
     train = training_data.copy()
     y = train["target"].values.astype(int)
     X = train.drop(columns=["target"])
@@ -259,12 +253,12 @@ def run_train_test(training_data: pd.DataFrame, testing_data: pd.DataFrame) -> L
         n_splits=5,
         random_state=0,
         threshold_grid_size=401,
-        model_params=None,  # you can tweak if you want
+        model_params=None
     )
     model.fit(X, y)
 
     preds = model.predict(testing_data).astype(int)
-    return preds.tolist()
+    return preds
 
 
 if __name__ == "__main__":
